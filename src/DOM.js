@@ -5,6 +5,11 @@
   Считаем, что всегда передается тег, допускающий вставку текста в качестве своего содержимого (P, DIV, I и пр.).
 */
 export function appendToBody(tag, content, count) {
+    let addedTag = document.createElement(tag);
+    addedTag.innerHTML = content;
+    for (let i = 0; i < count; i++) {
+        document.body.append(addedTag.cloneNode(true));
+    }
 }
 
 /*
@@ -14,7 +19,18 @@ export function appendToBody(tag, content, count) {
   Каждый элемент должен иметь класс вида item_n, где n - глубина вложенности элемента. (Нумерацию ведем с единицы).
   Сформированное дерево верните в качестве результата работы функции.
 */
-export function generateTree(childrenCount, level) {
+
+export function generateTree(childrenCount, level, curLevel = 1) {
+    let node = document.createElement('div');
+    node.className = 'item_' + curLevel;
+    if (curLevel < level) {
+        for (let i = 0; i < childrenCount; i++) {
+            node.append(generateTree(childrenCount, level, curLevel + 1));
+        }
+        return node;
+    } else {
+        return node;
+    }
 }
 
 /*
@@ -26,4 +42,13 @@ export function generateTree(childrenCount, level) {
   Сформированное дерево верните в качестве результата работы функции.
 */
 export function replaceNodes() {
+    let childrenCount = 2;
+    let tree = generateTree(childrenCount, 3);
+    for (let i = 0; i < childrenCount; i++) {
+        let section = document.createElement('section');
+        section.className = 'item_2';
+        section.innerHTML = tree.getElementsByClassName('item_2')[i].innerHTML;
+        tree.getElementsByClassName('item_2')[i].replaceWith(section);
+    }
+    return tree;
 }
